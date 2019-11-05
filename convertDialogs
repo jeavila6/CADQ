@@ -4,4 +4,4 @@
 # and store them in 'output_dir'
 output_dir=recordings
 mkdir -p $output_dir
-find . -name '*input_and_output.wav' -exec bash -c 'sox "$0" $1/$(basename "$0").au' {} $output_dir \;
+find . -name '*input_and_output.wav' -exec bash -c 'sox "$0" $1/$(basename "$0" .wav).au' {} $output_dir \;
