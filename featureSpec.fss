@@ -1,0 +1,38 @@
+# intensity (volume)
+vo  -400 to  -300 self
+vo  -300 to  -200 self
+vo  -200 to  -100 self
+vo  -100 to   -50 self
+vo   -50 to     0 self
+
+vo     0 to    50 self
+vo    50 to   100 self
+vo   100 to   200 self
+vo   200 to   300 self
+vo   300 to   400 self
+
+# voicing fraction
+vf  -400 to  -300 self
+vf  -300 to  -200 self
+vf  -200 to  -100 self
+vf  -100 to   -50 self
+vf   -50 to     0 self
+
+vf     0 to    50 self
+vf    50 to   100 self
+vf   100 to   200 self
+vf   200 to   300 self
+vf   300 to   400 self
+
+# speaking fraction
+sf  -400 to  -300 self
+sf  -300 to  -200 self
+sf  -200 to  -100 self
+sf  -100 to   -50 self
+sf   -50 to     0 self
+
+sf     0 to    50 self
+sf    50 to   100 self
+sf   100 to   200 self
+sf   200 to   300 self
+sf   300 to   400 self
