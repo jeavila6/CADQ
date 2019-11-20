@@ -44,7 +44,7 @@ optional arguments:
 Once open, click `Load` and select an AU file. Click `Start` to start recording. You can stop recording by clicking `Stop` or by waiting for the playback to end. When the recording stops, enter a name for the annotation file and click `Save`.
 
 <p align="center">
-  <img src="images/preview2.png">
+  <img src="images/preview.png">
 </p>
 
 Annotation files are tab-separated text files with the following values: *tier*, *duration*, *start time*, *end time*, *rating*.
