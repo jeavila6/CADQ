@@ -19,11 +19,26 @@ def monster_from_matlab(filename):
 
 if __name__ == '__main__':
 
-    # annotations and monsters must have matching names
+    # annotation and monster files must have matching names
     annotations_dir = r'D:\Google Drive\Research\CADQ\annotations'
     monsters_dir = r'D:\Google Drive\Research\CADQ\monsters'
 
+    # must match batch size to be used in training
+    batch_size = 128
+
     output_dir = r'D:\Google Drive\Research\CADQ\output'
+
+    # find the shortest dialog
+    shortest = np.Infinity
+    for file in os.listdir(annotations_dir):
+        name = os.path.splitext(file)[0]
+        monster = monster_from_matlab(f'{monsters_dir}\\{name}')
+        length = monster.shape[0]
+        if length < shortest:
+            shortest = length
+
+    # round to previous multiple of batch size
+    shortest = int(shortest / batch_size) * batch_size
 
     combined = []
 
@@ -31,8 +46,11 @@ if __name__ == '__main__':
 
         name = os.path.splitext(file)[0]
 
-        monster = monster_from_matlab(monsters_dir + '\\' + name)
-        ratings = ratings_from_matlab(annotations_dir + '\\' + name)
+        monster = monster_from_matlab(f'{monsters_dir}\\{name}')
+        ratings = ratings_from_matlab(f'{annotations_dir}\\{name}')
+
+        # cut to match length of shortest dialog
+        monster = monster[:shortest+1, :]
 
         # monster and ratings might be different sizes (there is some when stopping the recording)
         ratings = np.transpose(ratings)
