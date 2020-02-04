@@ -198,7 +198,7 @@ class Application(tk.Frame):
         self.start_stop_button.config(command=self.start_recording, text='Start', bg=COLOR_GREEN)
 
         # open save dialog, return if no selection was made
-        filepath = tk.filedialog.asksaveasfile(parent=self, mode='w', defaultextension='.txt')
+        filepath = tk.filedialog.asksaveasfile(parent=self, mode='w', initialfile=self.filename, defaultextension='.txt')
         if filepath is None:
             return
 
