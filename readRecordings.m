@@ -1,14 +1,14 @@
-function readRecordings(folder, frameSize)
-% READRECORDINGS Read recording files in a folder.
+function readRecordings(inputDir)
+% READRECORDINGS Read recording files and store annotation structs.
 
-files = dir([folder '\*.txt']);
+files = dir([inputDir '\*.txt']);
 outFolder = 'annotations';
 mkdir(outFolder);
 
-for i = 1:numel(files)
-    filename = [files(i).folder '\' files(i).name];
+for file = files'
+    filename = [file.folder '\' file.name];
     [~,name,~] = fileparts(filename);
-    annotation = readRecording(filename, frameSize);
+    annotation = readRecording(filename);
     save([outFolder '\' name '.mat'], 'annotation')
 end
 

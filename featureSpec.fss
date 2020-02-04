@@ -1,90 +1,20 @@
 # itensity (volume)
-vo -3000 to -2400 self
-vo -2400 to -1800 self
-vo -1800 to -1200 self
-vo -1200 to  -600 self
-vo  -600 to     0 self
-
-vo     0 to   600 self
-vo   600 to  1200 self
-vo  1200 to  1800 self
-vo  1800 to  2400 self
-vo  2400 to  3000 self
+vo 0 to 20 self
 
 # creakiness
-cr -3000 to -2400 self
-cr -2400 to -1800 self
-cr -1800 to -1200 self
-cr -1200 to  -600 self
-cr  -600 to     0 self
-
-cr     0 to   600 self
-cr   600 to  1200 self
-cr  1200 to  1800 self
-cr  1800 to  2400 self
-cr  2400 to  3000 self
+cr 0 to 20 self
 
 # true low pitch
-tl -3000 to -2400 self
-tl -2400 to -1800 self
-tl -1800 to -1200 self
-tl -1200 to  -600 self
-tl  -600 to     0 self
-
-tl     0 to   600 self
-tl   600 to  1200 self
-tl  1200 to  1800 self
-tl  1800 to  2400 self
-tl  2400 to  3000 self
+tl 0 to 20 self
 
 # true high pitch
-th -3000 to -2400 self
-th -2400 to -1800 self
-th -1800 to -1200 self
-th -1200 to  -600 self
-th  -600 to     0 self
-
-th     0 to   600 self
-th   600 to  1200 self
-th  1200 to  1800 self
-th  1800 to  2400 self
-th  2400 to  3000 self
+th 0 to 20 self
 
 # narrow pitch range
-np -3000 to -2400 self
-np -2400 to -1800 self
-np -1800 to -1200 self
-np -1200 to  -600 self
-np  -600 to     0 self
-
-np     0 to   600 self
-np   600 to  1200 self
-np  1200 to  1800 self
-np  1800 to  2400 self
-np  2400 to  3000 self
+np 0 to 20 self
 
 # wide pitch range
-wp -3000 to -2400 self
-wp -2400 to -1800 self
-wp -1800 to -1200 self
-wp -1200 to  -600 self
-wp  -600 to     0 self
-
-wp     0 to   600 self
-wp   600 to  1200 self
-wp  1200 to  1800 self
-wp  1800 to  2400 self
-wp  2400 to  3000 self
+wp 0 to 20 self
 
 # speaking-rate proxy
-sr -3000 to -2400 self
-sr -2400 to -1800 self
-sr -1800 to -1200 self
-sr -1200 to  -600 self
-sr  -600 to     0 self
-
-sr     0 to   600 self
-sr   600 to  1200 self
-sr  1200 to  1800 self
-sr  1800 to  2400 self
-sr  2400 to  3000 self
+sr 0 to 20 self

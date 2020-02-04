@@ -1,14 +1,15 @@
-function annotation = readRecording(filename, frameSize)
+function annotation = readRecording(filename)
 % READRECORDING Read recording file and return an annotation struct.
-%   Recording file at 'filename' must be a tab-separated text file with the 
-%   following values: tier, duration, start time, end time, rating. The
-%   returned annotation struct will have the following fields: name,
-%   frameSize (in milliseconds), ratings (taken at each frame).
+%   READRECORDING(filename) Recording file must be a tab-separated text 
+%   file with the following values: tier, duration, start time, end time, 
+%   rating. The returned annotation struct will have the following fields: 
+%   name, ratings (for each frame).
 
     [~,name,~] = fileparts(filename);
     annotation.name = name;
     
-    annotation.frameSize = frameSize;
+    % Frame size must match frame size in makeTrackMonster.m
+    frameSize = 20;
 
     fileID = fopen(filename);
     formatSpec = '%s %{hh:mm:ss.SSS}T %{hh:mm:ss.SSS}T %{hh:mm:ss.SSS}T %d';
