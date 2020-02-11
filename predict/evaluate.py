@@ -22,10 +22,9 @@ frame_ms = 20
 
 # plot actual vs. predicted
 x_axis = np.linspace(start=0, stop=predictions.shape[0] * frame_ms / 1000, num=predictions.shape[0])
-plt.title('Predicting Quality from Prosody')
-plt.plot(x_axis, y_test, 'k')
-plt.plot(x_axis, predictions, 'r')
+plt.plot(x_axis, y_test, 'k', label='Actual')
+plt.plot(x_axis, predictions, 'r', label='Predicted')
 plt.xlabel('Time (seconds)')
 plt.ylabel('Rating')
-plt.legend(['Actual', 'Predicted'])
+plt.legend()
 plt.show()
