@@ -1,20 +1,11 @@
 # itensity (volume)
 vo 0 to 20 self
 
-# creakiness
-cr 0 to 20 self
-
 # true low pitch
 tl 0 to 20 self
 
 # true high pitch
 th 0 to 20 self
 
-# narrow pitch range
-np 0 to 20 self
-
-# wide pitch range
-wp 0 to 20 self
-
-# speaking-rate proxy
-sr 0 to 20 self
+# lengthening
+le 0 to 20 self
