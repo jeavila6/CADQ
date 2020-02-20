@@ -1,5 +1,5 @@
 import numpy as np
-from sklearn.preprocessing import normalize
+from sklearn.preprocessing import scale
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers import LSTM, Dense
 
@@ -10,7 +10,8 @@ def load_dataset(filename):
     features = dataset[:, :-1]
     ratings = dataset[:, -1]
 
-    features = normalize(features, axis=1)
+    # standardize each feature
+    features = scale(features)
 
     train_size = 0.75
     split_ind = int(dataset.shape[0] * train_size)
