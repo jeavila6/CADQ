@@ -1,12 +1,12 @@
 .gitattributes
 .idea
-annotations
 *__pycache__
-dialogs
 *.asv
-midlevel-master
-monsters
-output
 *.html
+annotations
+dialogs
+midlevel-master
+features
+output
 recordings
 sap-voicebox-master
