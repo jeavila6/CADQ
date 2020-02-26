@@ -32,19 +32,11 @@ To load the sketch (program) onto the board, open `dial_sketch\dial_sketch.ino` 
 
 ## Download Dialogs
 
-Download a portion of [the integral Let's Go! dataset](https://github.com/DialRC/LetsGoDataset). Convert the `input_and_output` RAW files to AU using SoX. The audio is clear when using one channel,
+Download a portion of [the integral Let's Go! dataset](https://github.com/DialRC/LetsGoDataset). Convert the `input_and_output` RAW files to AU using SoX. 
 
 ```bash
 sox -r 8000 -e signed -b 16 -c 1 LetsGoPublic-20160101-000-input_and_output.raw out.au
 ```
-
-but is noisy when using two channels,
-
-```bash
-sox -r 4000 -e signed -b 16 -c 2 LetsGoPublic-20160101-000-input_and_output.raw out.au
-```
-
-Audio files appear to be monophonic. The [example audio file](http://www.speech.cs.cmu.edu/letsgo/example.html) is also monophonic.
 
 The path to the SoX executable must be added to your PATH environment variable. If you are using SoX 14.4.2, you will get a "no default audio device configured" error. This issue is specific to Windows 10 and can be resolved by downgrading to version 14.4.1.
 
