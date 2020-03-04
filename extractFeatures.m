@@ -2,15 +2,17 @@ function extractFeatures(inputDir)
 % EXTRACTFEATURES Extract prosodic features for dialogs.
 %   EXTRACTFEATURES(inputDir) Extract prosodic features for all dialogs in 
 %   specified directory using the Midlevel Toolkit. Dialogs must be in AU
-%   format. Monster matrices are saved in a new 'monsters' directory.
+%   format. Monster matrices are saved in a new 'features' directory.
     
-    outputDir = 'monsters';
+    outputDir = 'features';
     mkdir(outputDir)
     
     featureSpec = getfeaturespec('featureSpec.fss');
     
     files = dir([inputDir '/*.au']);
     for file = files'
+        
+        fprintf('extractFeatures: %s\n', file.name);
         
         % Make track monster for dialog
         % Use a single track since audio files are monaural
