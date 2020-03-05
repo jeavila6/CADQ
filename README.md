@@ -7,14 +7,15 @@ Everything you need for capturing continuous annotations of dialog quality and b
 
 ## Table of Contents
 
-- [Setup](#setup)
+- [Prerequisites](#prerequisites)
 - [Building the Input Device](#building-the-input-device)
-- [Recommended Datasets](#recommended-datasets)
+- [Converting Audio Files to AU Format](#converting-audio-files-to-au-format)
 - [Using the Annotation Software](#using-the-annotation-software)
-- [Extracting Prosodic Features](#extracting-prosodic-features)
-- [Reading Annotations](#reading-annotations)
+- [Building the Dataset](#building-the-dataset)
+- [Training the Model](#training-the-model)
+- [Evaluating the Model](#evaluating-the-model)
 
-## Setup
+## Prerequisites
 
 - [Arduino IDE](https://www.arduino.cc/en/Main/Software) 1.8.10
 - [MATLAB](https://www.mathworks.com/products/matlab.html) R2019b with [Curve Fitting Toolbox](https://www.mathworks.com/products/curvefitting.html) 3.5.10 and [Signal Processing Toolbox](https://www.mathworks.com/products/signal.html) 8.3
@@ -40,13 +41,13 @@ The design is simple; it's a potentiometer connected to an Arduino-compatible mi
 
 ![design](images/design.png)
 
-To load the sketch (program) onto the board, open `dial_sketch\dial_sketch.ino` in the Arduino IDE. Connect the board to your computer. Under `Tools`, select `Arduino Nano` for `Board` and the COM port associated with the board for `Port`. Click `Upload` and wait for the "Done uploading" message.
+To load the sketch (program) onto the board, open `dial_sketch\dial_sketch.ino` in the Arduino IDE. The minimum and maximum values the dial will output are controlled by `minValue` and `maxValue`, respectively. Connect the board to your computer. Under `Tools`, select `Arduino Nano` for `Board` and the COM port associated with the board for `Port`. Click `Upload` and wait for the "Done uploading" message.
 
-## Recommended Datasets
+## Converting Audio Files to AU Format
 
-Download a portion of [the integral Let's Go! dataset](https://github.com/DialRC/LetsGoDataset). Convert the `input_and_output` RAW files to AU using SoX. 
+Audio files must be in AU format. If the audio files are in RAW format, such as those found in the [Let's Go! dataset](https://github.com/DialRC/LetsGoDataset), you can convert them using the following SoX command.
 
-```bash
+```
 sox -r 8000 -e signed -b 16 -c 1 LetsGoPublic-20160101-000-input_and_output.raw out.au
 ```
 
@@ -54,7 +55,7 @@ The path to the SoX executable must be added to your PATH environment variable. 
 
 ## Using the Annotation Software
 
-The Dial Reader application presents a simple graphical user interface for playing an audio file while simultaneously recording your dial's value.
+The Dial Reader application presents a graphical user interface for playing an audio file while simultaneously recording the dial's value.
 
 ```
 usage: dial_reader.py [-h] device_name
@@ -69,30 +70,44 @@ optional arguments:
 
 The path to the Python executable must be added to your PATH environment variable. You can find the port associated with your dial by looking at the devices listed under `Ports` in Windows' Device Manager.
 
-Once open, click `Load` and select an AU file. Click `Start` to start recording. You can stop recording by clicking `Stop` or by waiting for the playback to end. When the recording stops, enter a name for the annotation file and click `Save`.
+Once open, click `Load` and select an audio file. Click `Start` to start recording. You can stop recording by clicking `Stop` or by waiting for the playback to end. When the recording stops, enter a name for the annotation file and click `Save`.
 
 ![software preview](images/software_preview.png)
 
-Annotation files are tab-separated text files with the following values: *tier*, *duration*, *start time*, *end time*, *rating*.
+Annotation files are saved as tab-separated text files with the following values: *tier*, *duration*, *start time*, *end time*, *rating* (dial value).
 
 ```
 rating  00:00:03.571    00:00:01.987    00:00:05.558    12
 ```
 
-## Extracting Prosodic Features
+## Building the Dataset
 
-The window size in `featureSpec.fss` is 20ms. Update line 63 of `makeTrackMonster.m` from the Midlevel Toolkit to use 20ms to match the window size.
+Prosodic features are extracted using the Midlevel Toolkit. The window size in the feature specification file `featureSpec.fss` is 20ms by default. Update line 63 of `makeTrackMonster.m` from the Midlevel Toolkit to match the window size.
 
-Call the `extractFeatures` MATLAB function with the path to the dialog files as its argument. The resulting monster matrices will be stored in a new `features` directory.
+```
+msPerFrame = 20;
+```
+
+Call the `extractFeatures` MATLAB function with the path to the audio files as its argument. The resulting matrices will be stored in a new `features` directory.
 
 ```matlab
 extractFeatures(<path>)
 ```
-
-## Reading Annotations
 
 Call the `readRecordings` MATLAB function with the path to the dial recording files as its argument. The resulting rating matrices will be stored in a new `annotations` directory.
 
 ```matlab
 readRecordings(<path>)
 ```
+
+Run `build_dataset.py` to read the prosodic features and annotation matrices and output a final array `dataset.npy`.
+
+## Training the Model
+
+Run `model.py` to train the model using the dataset.
+
+## Evaluating the Model
+
+Run `evaluate.py` to print the model summary, print the evaluation metrics for the model and the baseline, and plot the results.
+
+![plot](images/plot.png)
