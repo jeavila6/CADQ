@@ -1,6 +1,18 @@
 # Continuous Annotation of Dialog Quality
 
+[![GitHub issues](https://img.shields.io/github/issues/jeavila6/CADQ?style=flat-square)](https://github.com/jeavila6/CADQ/issues)
+![GitHub](https://img.shields.io/github/license/jeavila6/CADQ?style=flat-square)
+
 Everything you need for capturing continuous annotations of dialog quality and building a predictive model.
+
+## Table of Contents
+
+- [Setup](#setup)
+- [Building the Input Device](#building-the-input-device)
+- [Recommended Datasets](#recommended-datasets)
+- [Using the Annotation Software](#using-the-annotation-software)
+- [Extracting Prosodic Features](#extracting-prosodic-features)
+- [Reading Annotations](#reading-annotations)
 
 ## Setup
 
@@ -13,7 +25,7 @@ Everything you need for capturing continuous annotations of dialog quality and b
 
 This project has been tested with Windows 10.
 
-## Build the Dial
+## Building the Input Device
 
 Annotations are recorded using an input device with a dial. You will need the following components (links to [Adafruit](https://www.adafruit.com/)).
 
@@ -30,7 +42,7 @@ The design is simple; it's a potentiometer connected to an Arduino-compatible mi
 
 To load the sketch (program) onto the board, open `dial_sketch\dial_sketch.ino` in the Arduino IDE. Connect the board to your computer. Under `Tools`, select `Arduino Nano` for `Board` and the COM port associated with the board for `Port`. Click `Upload` and wait for the "Done uploading" message.
 
-## Download Dialogs
+## Recommended Datasets
 
 Download a portion of [the integral Let's Go! dataset](https://github.com/DialRC/LetsGoDataset). Convert the `input_and_output` RAW files to AU using SoX. 
 
@@ -40,7 +52,7 @@ sox -r 8000 -e signed -b 16 -c 1 LetsGoPublic-20160101-000-input_and_output.raw 
 
 The path to the SoX executable must be added to your PATH environment variable. If you are using SoX 14.4.2, you will get a "no default audio device configured" error. This issue is specific to Windows 10 and can be resolved by downgrading to version 14.4.1.
 
-## Record Annotations
+## Using the Annotation Software
 
 The Dial Reader application presents a simple graphical user interface for playing an audio file while simultaneously recording your dial's value.
 
@@ -67,17 +79,17 @@ Annotation files are tab-separated text files with the following values: *tier*,
 rating  00:00:03.571    00:00:01.987    00:00:05.558    12
 ```
 
-## Extract Prosodic Features
+## Extracting Prosodic Features
 
 The window size in `featureSpec.fss` is 20ms. Update line 63 of `makeTrackMonster.m` from the Midlevel Toolkit to use 20ms to match the window size.
 
-If you are using MATLAB R2019a or above, update line 42 of `findDimensions.m` to use `pca` instead of `princomp` (the `princomp` function was removed as of R2019a). Call the `extractFeatures` MATLAB function with the path to the dialog files as its argument. The resulting monster matrices will be stored in a new `monsters` directory.
+Call the `extractFeatures` MATLAB function with the path to the dialog files as its argument. The resulting monster matrices will be stored in a new `features` directory.
 
 ```matlab
 extractFeatures(<path>)
 ```
 
-## Convert Dial Readings to Ratings
+## Reading Annotations
 
 Call the `readRecordings` MATLAB function with the path to the dial recording files as its argument. The resulting rating matrices will be stored in a new `annotations` directory.
 
