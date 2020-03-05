@@ -7,23 +7,25 @@ from tensorflow.keras.layers import LSTM, Dense
 def load_dataset(filename):
     dataset = np.load(filename)
 
-    features = dataset[:, :-1]
-    ratings = dataset[:, -1]
+    x = dataset[:, :-1]
+    y = dataset[:, -1]
 
     # standardize each feature
-    features = scale(features)
+    x = scale(x)
+
+    n_timesteps = 45
+    n_features = x.shape[1]
+
+    x = np.reshape(x, (-1, n_timesteps, n_features))
+    y = np.reshape(y, (-1, n_timesteps))
 
     train_size = 0.75
-    split_ind = int(dataset.shape[0] * train_size)
+    split_ind = int(x.shape[0] * train_size)
 
-    train_x = features[:split_ind, :]
-    test_x = features[split_ind:, :]
-    train_y = ratings[:split_ind]
-    test_y = ratings[split_ind:]
-
-    # reshape to (samples, time steps, features)
-    train_x = np.reshape(train_x, (train_x.shape[0], 1, train_x.shape[1]))
-    test_x = np.reshape(test_x, (test_x.shape[0], 1, test_x.shape[1]))
+    train_x = x[:split_ind, :, :]
+    test_x = x[split_ind:, :, :]
+    train_y = y[:split_ind, :]
+    test_y = y[split_ind:, :]
 
     return train_x, test_x, train_y, test_y
 
@@ -36,12 +38,12 @@ if __name__ == '__main__':
     model.add(LSTM(units=20, activation='relu', return_sequences=True, dropout=0.2,
                    input_shape=(x_train.shape[1], x_train.shape[2])))
     model.add(LSTM(units=40, activation='relu', dropout=0.4))
-    model.add(Dense(units=1))
+    model.add(Dense(units=45))
 
     model.summary()
 
     model.compile(loss='mse', optimizer='adam', metrics=['mse', 'mae'])
 
-    model.fit(x=x_train, y=y_train, batch_size=128, epochs=3, validation_data=(x_test, y_test))
+    model.fit(x=x_train, y=y_train, batch_size=128, epochs=5, validation_data=(x_test, y_test))
 
     model.save('saved_model.h5')
