@@ -51,6 +51,12 @@ Audio files must be in AU format. If the audio files are in RAW format, such as 
 sox -r 8000 -e signed -b 16 -c 1 LetsGoPublic-20160101-000-input_and_output.raw out.au
 ```
 
+Alternatively, you can batch convert any RAW files in a directory using the `autoConvert.sh` script.
+
+```
+./autoConvert.sh
+```
+
 The path to the SoX executable must be added to your PATH environment variable. If you are using SoX 14.4.2, you will get a "no default audio device configured" error. This issue is specific to Windows 10 and can be resolved by downgrading to version 14.4.1.
 
 ## Using the Annotation Software
