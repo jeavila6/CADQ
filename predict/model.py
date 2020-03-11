@@ -1,5 +1,5 @@
 import numpy as np
-from sklearn.preprocessing import scale
+from sklearn.preprocessing import Normalizer
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers import LSTM, Dense
 
@@ -7,26 +7,41 @@ from tensorflow.keras.layers import LSTM, Dense
 def load_dataset(filename):
     dataset = np.load(filename)
 
-    x = dataset[:, :-1]
-    y = dataset[:, -1]
+    frame_size_ms = 20
+    sample_size_s = 5
+
+    n_timesteps = int(sample_size_s * 1000 / frame_size_ms)  # frames per sample
+
+    # trim dataset length to be a multiple of number of timesteps
+    length = dataset.shape[0]
+    length_new = length - (length % n_timesteps)
+    dataset = dataset[:length_new, :]
+
+    x = dataset[:, :-1]  # features are stored in columns up to second last column
+    y = dataset[:, -1]  # ratings are stored in last column
 
     n_features = x.shape[1]
-    n_timesteps = 45
 
-    # standardize each feature
-    x = scale(x)
-
-    # reshape for LSTM
-    x = np.reshape(x, (-1, n_timesteps, n_features))  # x.shape is (n_samples, n_timesteps, n_features)
-    y = y[::n_timesteps]  # y.shape is (n_samples,)
-
+    # split dataset into training and test sets
     train_size = 0.75
     split_ind = int(x.shape[0] * train_size)
-
-    train_x = x[:split_ind, :, :]
-    test_x = x[split_ind:, :, :]
+    train_x = x[:split_ind, :]
+    test_x = x[split_ind:, :]
     train_y = y[:split_ind]
     test_y = y[split_ind:]
+
+    # normalize training set, then normalize test set using same rules
+    normalizer = Normalizer(copy=False)
+    normalizer.fit_transform(train_x)
+    normalizer.transform(test_x)
+
+    # reshape to (n_samples, n_timesteps, n_features)
+    train_x = np.reshape(train_x, (-1, n_timesteps, n_features))
+    test_x = np.reshape(test_x, (-1, n_timesteps, n_features))
+
+    # reshape to be (n_samples,)
+    train_y = train_y[::n_timesteps]
+    test_y = test_y[::n_timesteps]
 
     return train_x, test_x, train_y, test_y
 
