@@ -1,12 +1,13 @@
 function extractFeatures(inputDir)
-% EXTRACTFEATURES(inputDir) Extract prosodic features for Let's Go 'input'
-% (user) and 'input_and_output' (system-user) audio files in a directory. 
-% Features are extracted for system and user seperately by assuming 
-% speakers never overlap. The left half of each matrix contains the the
-% user features while the right half contains the system features. The 
-% resulting matrices are stored in a new 'features' directory.
+% EXTRACTFEATURES Extract prosodic features from Let's Go 'input' (user) 
+% and 'input_and_output' (system-user) audio files.
+%
+%   EXTRACTFEATURES(inputDir) Extract features for all files in a
+%   directory. Matrices are saved to a new 'features' directory. The left 
+%   half of each matrix contains the the user features while the right half 
+%   contains the system features.
 
-    msPerFrame = 10; % Value must match 'msPerFrame' in 'makeTrackMonster.m'
+    msPerFrame = 20; % Must match 'msPerFrame' in 'makeTrackMonster.m'
     audioFormat = 'au';
     outputDir = 'features';
 
@@ -14,85 +15,84 @@ function extractFeatures(inputDir)
 
     featureSpec = getfeaturespec('featureSpec.fss');
 
-    files = dir([inputDir '\*.' audioFormat]);
-    numFiles = size(files, 1);
+    matchingFiles = dir([inputDir '\*.' audioFormat]);
+    numFiles = size(matchingFiles, 1);
 
-    % Show error if directory doesn't contain files matching audio format
+    % Show error if directory doesn't contain any matching files
     if  numFiles == 0
         fprintf('No %s files found in directory\n', upper(audioFormat));
         return
     end
 
     % The Let's Go! dataset contains the audio files
-    %   'LetsGoPublic-<DATE>-<ID>-input' 
-    %   'LetsGoPublic-<DATE>-<ID>-input_and_output' 
-    % for user and system-user, respectively.
+    %   'LetsGoPublic-<DATE>-<ID>-input'
+    %   'LetsGoPublic-<DATE>-<ID>-input_and_output'
+    % for user and system-user, respectively, for each dialog
 
-    % Make a list of all LetsGoPublic-<DATE>-<ID> stamps
+    % Make a list of all 'LetsGoPublic-<DATE>-<ID>' stamps
     stamps = {};
-    for file = files'
-        parts = strsplit(file.name,'-');
+    for file = matchingFiles'
+        parts = strsplit(file.name,'-'); % Use '-' as tokenizing character
         base = strjoin(parts(1:3),'-');
         if ~any(strcmp(stamps, base))
-            stamps(end+1) = {base}; % Add stamp to list if it hasn't already
+            stamps(end+1) = {base}; % Add stamp to list if it doesn't exist
         end
 
     end
 
-    inputDir = [inputDir '\']; % Append with backslash if missing
+    inputDir = [inputDir '\']; % Avoid any path errors
 
-    % For each stamp, extract and store features for system and user
+    % For each stamp, extract features for system and user seperately using 
+    % matching 'input' and 'input_and_output' audio files (assume speakers 
+    % never overlap) and save feature matrix as 
+    %   'LetsGoPublic-<DATE>-<ID>-features'
     for i=1:length(stamps)
 
-        side = 'l'; % Audio files are mono, left side will do
+        side = 'l'; % Audio files are mono, so only one track is needed
 
-        name = char(stamps(i)); % Get the basename of the file
+        stamp = char(stamps(i));
+        fprintf('%s\n', stamp);
 
-        % Print the name of this class and file being processed
-        fprintf('%s: %s...', mfilename('class'), name);
-
-        % Make track monster for the user audio file
-        filenameUser = [name '-input.' audioFormat];
+        % Make track monster from user audio file
+        filenameUser = [stamp '-input.' audioFormat];
         trackSpecUser = makeTrackspec(side, filenameUser, inputDir);
         [~, monsterUser] = makeTrackMonster(trackSpecUser, featureSpec);
 
-        % Make track monster for the system-user audio file
-        filenameBoth = [name '-input_and_output.' audioFormat];
-        trackSpecBoth = makeTrackspec(side, filenameBoth, inputDir);
-        [~, monsterBoth] = makeTrackMonster(trackSpecBoth, featureSpec);
+        % Make track monster from system-user audio file
+        filenameSystemUser = [stamp '-input_and_output.' audioFormat];
+        trackSpecBoth = makeTrackspec(side, filenameSystemUser, inputDir);
+        [~, monsterSystemUser] = makeTrackMonster(trackSpecBoth, featureSpec);
 
-        % Get the speaking frames of the user
+        % Get speaking frames of user audio file
         [sampleRate, signal] = readtracks(trackSpecUser.path);
         samplesPerFrame = msPerFrame * (sampleRate / 1000);
         energy = computeLogEnergy(signal', samplesPerFrame);
         speaking = speakingFrames(energy);
 
-        trimmedFrames = 0;
-
-        % The 'monsterUser' array is shorter than 'speaking' and 'monsterBoth'
-        % Trim the 'speaking' array to match the 'monsterUser' array
+        % 'monsterUser' is shorter than 'speaking' and 'monsterSystemUser' 
+        % Trim 'speaking' to match length of 'monsterUser'
         diff = length(speaking) - length(monsterUser);
         speaking(end-diff+1:end) = [];
-        trimmedFrames = trimmedFrames + diff;
+        fprintf('\tTrimmed frames from ''speaking'': %d\n', diff);
 
-        % Trim the 'monsterBoth' array to match the 'monsterUser' array
-        diff = length(monsterBoth) - length(monsterUser);
-        monsterBoth(end-diff+1:end, :) = [];
-        trimmedFrames = trimmedFrames + diff;
-
-        fprintf('trimmed %d frames.\n', trimmedFrames);
+        % Trim 'monsterSystemUser' to match length of 'monsterUser'
+        diff = length(monsterSystemUser) - length(monsterUser);
+        monsterSystemUser(end-diff+1:end, :) = [];
+        fprintf('\tTrimmed frames from ''monsterBoth'': %d\n', diff);
 
         % Remove non-speaking frames from 'monsterUser'
         monsterUser = monsterUser .* speaking';
 
-        % Remove speaking frames from 'monsterBoth' to create 'monsterSystem'
-        monsterSystem = monsterBoth .* ~speaking';
+        % Remove speaking frames from 'monsterSystemUser' to create 
+        % 'monsterSystem'
+        monsterSystem = monsterSystemUser .* ~speaking';
 
-        % Combine
+        % Combine 'monsterUser' and 'monsterSystem' to create feature
+        % matrix
         features = [monsterUser monsterSystem];
 
-        % Save to output directory
-        save([outputDir '/' name '-features.mat'], 'features');
+        % Save feature matrix to output directory
+        save([outputDir '/' stamp '-features.mat'], 'features');
 
     end
 end
