@@ -20,13 +20,16 @@ if __name__ == '__main__':
 
     for i, annotation_file in enumerate(annotation_files):
 
+        # get basename (stamp) from filename
         filename = os.path.splitext(annotation_file)[0]
+        parts = filename.split('-')
+        stamp = '-'.join(parts[:-1])
 
-        # load feature matrix with matching filename
-        features_mat = loadmat(os.path.join(features_dir, filename))
-        features = features_mat['monster']
+        # load feature matrix with matching basename
+        features_mat = loadmat(os.path.join(features_dir, stamp + '-features'))
+        features = features_mat['features']
 
-        # load annotation matrix with matching filename and extract ratings column
+        # load ratings column from annotation matrix with matching basename
         ratings_mat = loadmat(os.path.join(annotations_dir, filename))
         ratings = ratings_mat['annotation']['ratings'][0, 0]
         ratings = np.transpose(ratings)
