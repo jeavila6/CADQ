@@ -73,12 +73,12 @@ function extractFeatures(inputDir)
         % Trim 'speaking' to match length of 'monsterUser'
         diff = length(speaking) - length(monsterUser);
         speaking(end-diff+1:end) = [];
-        fprintf('\tTrimmed frames from ''speaking'': %d\n', diff);
+        fprintf('\textractFeatures: trimmed %d frames from ''speaking''\n', diff);
 
         % Trim 'monsterSystemUser' to match length of 'monsterUser'
         diff = length(monsterSystemUser) - length(monsterUser);
         monsterSystemUser(end-diff+1:end, :) = [];
-        fprintf('\tTrimmed frames from ''monsterBoth'': %d\n', diff);
+        fprintf('\textractFeatures: trimmed %d frames from ''monsterBoth''\n', diff);
 
         % Remove non-speaking frames from 'monsterUser'
         monsterUser = monsterUser .* speaking';
