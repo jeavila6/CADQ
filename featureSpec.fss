@@ -7,5 +7,5 @@ tl 0 to 20 self
 # true high pitch
 th 0 to 20 self
 
-# lengthening (temporarily disabled due to bug)
-# le 0 to 20 self
+# lengthening
+le 0 to 20 self
