@@ -94,6 +94,12 @@ Prosodic features are extracted using the Midlevel Toolkit. The window size in t
 msPerFrame = 20;
 ```
 
+Update line 16 of `cepstralFlux.m` to use a matching frame shift.
+
+```
+cc = mfcc(signal, rate, 25, 20, .97, @hamming, [300 3700], 20, 13, 22);
+```
+
 Call the `extractFeatures` MATLAB function with the path to the audio files as its argument. The resulting matrices will be stored in a new `features` directory.
 
 ```matlab
