@@ -7,10 +7,9 @@ function extractFeatures(inputDir)
 %   half of each matrix contains the the user features while the right half 
 %   contains the system features.
 
-    msPerFrame = 20; % Must match 'msPerFrame' in 'makeTrackMonster.m'
     audioFormat = 'au';
+    
     outputDir = 'features';
-
     mkdir(outputDir);
 
     featureSpec = getfeaturespec('featureSpec.fss');
@@ -65,6 +64,7 @@ function extractFeatures(inputDir)
 
         % Get speaking frames of user audio file
         [sampleRate, signal] = readtracks(trackSpecUser.path);
+        msPerFrame = 10; % To match msPerFrame found in makeTrackMonster.m
         samplesPerFrame = msPerFrame * (sampleRate / 1000);
         energy = computeLogEnergy(signal', samplesPerFrame);
         speaking = speakingFrames(energy);
@@ -90,6 +90,11 @@ function extractFeatures(inputDir)
         % Combine 'monsterUser' and 'monsterSystem' to create feature
         % matrix
         features = [monsterUser monsterSystem];
+        
+        % Frame size is set to 20ms in feature specification file
+        % Since step size is 10ms by default, take every other element to 
+        % get frame every 20ms
+        features = features(2:2:end,:);
 
         % Save feature matrix to output directory
         save([outputDir '/' stamp '-features.mat'], 'features');

@@ -89,19 +89,7 @@ rating  00:00:03.571    00:00:01.987    00:00:05.558    12
 
 ## Building the Dataset
 
-Prosodic features are extracted using the Midlevel Toolkit. The window size in the feature specification file `featureSpec.fss` is 20ms by default. Update line 63 of `makeTrackMonster.m` from the Midlevel Toolkit to match the window size.
-
-```
-msPerFrame = 20;
-```
-
-Update line 16 of `cepstralFlux.m` to use a matching frame shift.
-
-```
-cc = mfcc(signal, rate, 25, 20, .97, @hamming, [300 3700], 20, 13, 22);
-```
-
-Call the `extractFeatures` MATLAB function with the path to the audio files as its argument. The resulting matrices will be stored in a new `features` directory.
+Prosodic features are extracted using the Midlevel Toolkit. Features are computed for every 20ms frame. Call the `extractFeatures` MATLAB function with the path to the audio files as its argument. The resulting matrices will be stored in a new `features` directory.
 
 ```matlab
 extractFeatures(<path>)
